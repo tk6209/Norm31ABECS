@@ -4,6 +4,7 @@ Este repositório apresenta um infográfico interativo de página única (SPA) q
 
 A proposta é traduzir a complexidade do normativo em uma experiência visual envolvente, destacando os principais componentes, tecnologias e benefícios que moldam o futuro da segurança em pagamentos digitais no Brasil.
 
+https://tk6209.github.io/Norm31ABECS
 ---
 
 ## 📌 Visão Geral
