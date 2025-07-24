@@ -127,6 +127,12 @@
             font-size: 0.75rem;
             color: #005F73;
         }
+        .benefit-icon {
+            font-size: 3.5rem; /* Larger size for impact */
+            color: #0A9396; /* Consistent color from palette */
+            margin-bottom: 1rem;
+            line-height: 1; /* Ensure no extra space */
+        }
     </style>
 </head>
 <body class="text-gray-800">
@@ -194,30 +200,22 @@
                 <h2 class="text-3xl font-bold text-center mb-8 text-gray-800">Benefícios Chave do Framework</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                     <div class="benefit-card text-center">
-                        <div class="chart-container h-48 max-h-48 mx-auto mb-4">
-                            <canvas id="securityChart"></canvas>
-                        </div>
+                        <div class="benefit-icon">🛡️</div>
                         <h3 class="text-xl font-bold mb-2 text-teal-700">Segurança Robusta</h3>
                         <p class="text-gray-600">Redução de fraudes com tokens, biometria (FIDO2) e o padrão 3DS.</p>
                     </div>
                     <div class="benefit-card text-center">
-                        <div class="chart-container h-48 max-h-48 mx-auto mb-4">
-                            <canvas id="uxChart"></canvas>
-                        </div>
+                        <div class="benefit-icon">✨</div>
                         <h3 class="text-xl font-bold mb-2 text-teal-700">Facilidade de Uso</h3>
                         <p class="text-gray-600">Melhora a experiência do usuário e reduz o abandono de carrinho.</p>
                     </div>
                     <div class="benefit-card text-center">
-                        <div class="chart-container h-48 max-h-48 mx-auto mb-4">
-                            <canvas id="scalabilityChart"></canvas>
-                        </div>
+                        <div class="benefit-icon">🚀</div>
                         <h3 class="text-xl font-bold mb-2 text-teal-700">Escalabilidade</h3>
                         <p class="text-gray-600">Suporta alto volume de transações, mesmo em picos de vendas.</p>
                     </div>
                     <div class="benefit-card text-center">
-                        <div class="chart-container h-48 max-h-48 mx-auto mb-4">
-                            <canvas id="flexibilityChart"></canvas>
-                        </div>
+                        <div class="benefit-icon">🔄</div>
                         <h3 class="text-xl font-bold mb-2 text-teal-700">Flexibilidade</h3>
                         <p class="text-gray-600">Integra-se a diversos sistemas, plataformas e carteiras digitais.</p>
                     </div>
@@ -423,33 +421,7 @@
             }
         });
 
-        const createBenefitChart = (id, value, color) => {
-            new Chart(document.getElementById(id), {
-                type: 'doughnut',
-                data: {
-                    labels: ['Benefício', ''],
-                    datasets: [{
-                        data: [value, 100 - value],
-                        backgroundColor: [color, '#e5e7eb'],
-                        borderColor: ['#ffffff'],
-                        borderWidth: 4,
-                        hoverOffset: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    cutout: '70%',
-                    plugins: defaultPlugins
-                }
-            });
-        };
-
-        createBenefitChart('securityChart', 95, '#005F73');
-        createBenefitChart('uxChart', 90, '#0A9396');
-        createBenefitChart('scalabilityChart', 85, '#94D2BD');
-        createBenefitChart('flexibilityChart', 88, '#EE9B00');
-
+        // Removed createBenefitChart function as it's no longer needed for icons
     </script>
 </body>
 </html>
