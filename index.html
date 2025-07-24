@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infográfico: O Framework de Autenticação ABECS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (max-width: 768px) {
+            .chart-container {
+                height: 300px;
+            }
+        }
+        .kpi-value {
+            font-weight: 900;
+            color: #0A9396;
+            line-height: 1;
+        }
+        .flow-arrow {
+            font-size: 2rem;
+            color: #94D2BD;
+            line-height: 1;
+        }
+        .flow-box {
+            border: 2px solid #0A9396;
+            background-color: #f0fdfa;
+        }
+        .benefit-card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            padding: 1.5rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .benefit-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+        .gradient-text {
+            background: linear-gradient(45deg, #0A9396, #005F73);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        /* Styles for the new combination diagram */
+        .combination-diagram {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.5rem;
+            background-color: #f0fdfa;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        .diagram-node {
+            background-color: #fff;
+            border: 2px solid #0A9396;
+            border-radius: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            text-align: center;
+            font-weight: 600;
+            color: #005F73;
+            box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        }
+        .diagram-connector {
+            width: 2px;
+            height: 2rem;
+            background-color: #94D2BD;
+            position: relative;
+        }
+        .diagram-connector::after {
+            content: '▼';
+            position: absolute;
+            bottom: -0.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #94D2BD;
+            font-size: 1rem;
+        }
+        .diagram-horizontal-line {
+            width: 100%;
+            height: 2px;
+            background-color: #94D2BD;
+            margin: 0.5rem 0;
+        }
+        .diagram-label {
+            font-size: 0.875rem;
+            color: #005F73;
+            margin-top: 0.5rem;
+        }
+        .diagram-row {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .diagram-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .diagram-icon {
+            font-size: 2.5rem;
+            color: #0A9396;
+            margin-bottom: 0.5rem;
+        }
+        .diagram-text-small {
+            font-size: 0.75rem;
+            color: #005F73;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8">
+
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-extrabold mb-2 gradient-text">A Evolução da Segurança em Pagamentos</h1>
+            <p class="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">Uma análise visual do Framework de Autenticação do Normativo ABECS Nº 31, que vai além do 3DS para um ecossistema de segurança mais robusto e integrado.</p>
+        </header>
+
+        <main class="space-y-16">
+
+            <section id="kpis">
+                <h2 class="text-3xl font-bold text-center mb-8 text-gray-800">Impacto Direto da Tokenização</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                    <div class="benefit-card text-center">
+                        <p class="text-lg text-gray-600 mb-2">Aumento na Taxa de Aprovação</p>
+                        <p class="text-7xl kpi-value">+4.7%</p>
+                        <p class="mt-4 text-gray-500">A substituição de dados sensíveis por tokens eleva a confiança dos emissores, resultando em mais transações aprovadas.</p>
+                    </div>
+                    <div class="benefit-card text-center">
+                        <p class="text-lg text-gray-600 mb-2">Redução de Fraudes</p>
+                        <p class="text-7xl kpi-value">-31%</p>
+                        <p class="mt-4 text-gray-500">Tokens tornam os dados do cartão inúteis para fraudadores, diminuindo drasticamente os chargebacks e perdas.</p>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="flow">
+                <h2 class="text-3xl font-bold text-center mb-8 text-gray-800">Componentes Chave do Framework</h2>
+                <p class="text-center text-gray-600 max-w-2xl mx-auto mb-10">O framework opera como um fluxo contínuo e interconectado para garantir a segurança em cada etapa da transação.</p>
+                <div class="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-0 text-center">
+                    <div class="p-6 rounded-lg flow-box w-60">
+                        <div class="text-4xl mb-2">💳</div>
+                        <h3 class="font-bold text-lg text-teal-800">Geração de Tokens</h3>
+                        <p class="text-sm text-teal-700">O PAN é substituído por um token único.</p>
+                    </div>
+                    <div class="flow-arrow transform md:-rotate-0 rotate-90">➔</div>
+                    <div class="p-6 rounded-lg flow-box w-60">
+                        <div class="text-4xl mb-2">🔍</div>
+                        <h3 class="font-bold text-lg text-teal-800">ID & Verificação</h3>
+                        <p class="text-sm text-teal-700">O token é validado e vinculado a um dispositivo.</p>
+                    </div>
+                    <div class="flow-arrow transform md:-rotate-0 rotate-90">➔</div>
+                    <div class="p-6 rounded-lg flow-box w-60">
+                        <div class="text-4xl mb-2">🛡️</div>
+                        <h3 class="font-bold text-lg text-teal-800">Autenticação</h3>
+                        <p class="text-sm text-teal-700">Via 3DS ou Payment Passkeys (Biometria).</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="solutions">
+                <h2 class="text-3xl font-bold text-center mb-8 text-gray-800">Um Ecossistema de Soluções de Autenticação</h2>
+                <p class="text-center text-gray-600 max-w-2xl mx-auto mb-10">O framework não se baseia em uma única tecnologia, mas em um conjunto de soluções que se adaptam a diferentes cenários, equilibrando segurança e experiência do usuário.</p>
+                <div class="benefit-card">
+                    <div class="chart-container h-[450px] max-h-[500px]">
+                        <canvas id="solutionsChart"></canvas>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="benefits">
+                <h2 class="text-3xl font-bold text-center mb-8 text-gray-800">Benefícios Chave do Framework</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div class="benefit-card text-center">
+                        <div class="chart-container h-48 max-h-48 mx-auto mb-4">
+                            <canvas id="securityChart"></canvas>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2 text-teal-700">Segurança Robusta</h3>
+                        <p class="text-gray-600">Redução de fraudes com tokens, biometria (FIDO2) e o padrão 3DS.</p>
+                    </div>
+                    <div class="benefit-card text-center">
+                        <div class="chart-container h-48 max-h-48 mx-auto mb-4">
+                            <canvas id="uxChart"></canvas>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2 text-teal-700">Facilidade de Uso</h3>
+                        <p class="text-gray-600">Melhora a experiência do usuário e reduz o abandono de carrinho.</p>
+                    </div>
+                    <div class="benefit-card text-center">
+                        <div class="chart-container h-48 max-h-48 mx-auto mb-4">
+                            <canvas id="scalabilityChart"></canvas>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2 text-teal-700">Escalabilidade</h3>
+                        <p class="text-gray-600">Suporta alto volume de transações, mesmo em picos de vendas.</p>
+                    </div>
+                    <div class="benefit-card text-center">
+                        <div class="chart-container h-48 max-h-48 mx-auto mb-4">
+                            <canvas id="flexibilityChart"></canvas>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2 text-teal-700">Flexibilidade</h3>
+                        <p class="text-gray-600">Integra-se a diversos sistemas, plataformas e carteiras digitais.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="use-cases">
+                <h2 class="text-3xl font-bold text-center mb-8 text-gray-800">Casos de Uso Aplicados</h2>
+                <p class="text-center text-gray-600 max-w-2xl mx-auto mb-10">Cada tipo de transação pode ser otimizado com a tecnologia de autenticação mais adequada, garantindo a melhor performance.</p>
+                <div class="benefit-card overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="border-b-2 border-gray-200">
+                            <tr>
+                                <th class="p-4 text-lg font-semibold text-teal-800">Cenário de Pagamento</th>
+                                <th class="p-4 text-lg font-semibold text-teal-800">Tecnologia Utilizada</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b border-gray-100">
+                                <td class="p-4 font-semibold">Assinaturas e Recorrências (MIT)</td>
+                                <td class="p-4 text-gray-600">Verificação de Token (ID&V)</td>
+                            </tr>
+                            <tr class="border-b border-gray-100">
+                                <td class="p-4 font-semibold">Card on File + 1ª Compra (CIT)</td>
+                                <td class="p-4 text-gray-600">Payment Passkeys</td>
+                            </tr>
+                            <tr class="border-b border-gray-100">
+                                <td class="p-4 font-semibold">Guest Checkout (CIT)</td>
+                                <td class="p-4 text-gray-600">Payment Passkeys + Autenticação Passiva</td>
+                            </tr>
+                            <tr>
+                                <td class="p-4 font-semibold">Transações Não Tokenizadas</td>
+                                <td class="p-4 text-gray-600">EMV 3D-Secure</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="combination-map">
+                <h2 class="text-3xl font-bold text-center mb-8 text-gray-800">Como as Soluções se Combinam</h2>
+                <p class="text-center text-gray-600 max-w-2xl mx-auto mb-10">O Framework de Autenticação permite a combinação estratégica de diferentes tecnologias para otimizar a segurança e a experiência do usuário em diversos fluxos de pagamento.</p>
+                <div class="combination-diagram max-w-5xl mx-auto">
+                    <div class="diagram-row">
+                        <div class="diagram-column">
+                            <div class="diagram-node">Card On File</div>
+                            <div class="diagram-connector"></div>
+                            <div class="diagram-text-small">Comércio suporta TOKENIZAÇÃO e a autenticação não é via 3DS</div>
+                            <div class="diagram-icon">⬡</div>
+                            <div class="diagram-node">Tokens</div>
+                        </div>
+                        <div class="diagram-column">
+                            <div class="diagram-node">Card On File</div>
+                            <div class="diagram-connector"></div>
+                            <div class="diagram-text-small">Comércio suporta Autenticação via 3DSecure</div>
+                            <div class="diagram-icon">🔒</div>
+                            <div class="diagram-node">3DSecure<br><span class="diagram-text-small">(Data Share Only / 3DS Full)</span></div>
+                        </div>
+                        <div class="diagram-column">
+                            <div class="diagram-node">Guest Checkout</div>
+                            <div class="diagram-connector"></div>
+                            <div class="diagram-text-small">Portador do cartão Não Realiza o check-out com SRC</div>
+                            <div class="diagram-icon">🛒</div>
+                            <div class="diagram-node">Portador do cartão Realiza o Check-out via SRC</div>
+                            <div class="diagram-connector"></div>
+                            <div class="diagram-icon">≫</div>
+                            <div class="diagram-node">Network token</div>
+                        </div>
+                    </div>
+                    <div class="diagram-horizontal-line my-8"></div>
+                    <div class="diagram-node text-2xl py-4 px-8">Payment Passkeys</div>
+                    <div class="diagram-text-small mt-2 text-center max-w-xl">As Payment Passkeys servem como uma camada fundamental de autenticação, podendo ser aplicadas em diversos pontos do fluxo para reforçar a segurança e simplificar a experiência do usuário.</div>
+                </div>
+            </section>
+            
+        </main>
+
+        <footer class="text-center mt-16 pt-8 border-t border-gray-200">
+            <p class="text-gray-500">Todos os dados são baseados no normativo Nº 31.<br><span class="text-xs">Copyright © 2025 AuthPros.</span></p>
+        </footer>
+
+    </div>
+
+    <script>
+        const tooltipTitleCallback = (tooltipItems) => {
+            const item = tooltipItems[0];
+            let label = item.chart.data.labels[item.dataIndex];
+            if (Array.isArray(label)) {
+                return label.join(' ');
+            }
+            return label;
+        };
+
+        const defaultPlugins = {
+            legend: {
+                display: false
+            },
+            tooltip: {
+                callbacks: {
+                    title: tooltipTitleCallback
+                },
+                backgroundColor: '#005F73',
+                titleFont: {
+                    size: 14,
+                    weight: 'bold'
+                },
+                bodyFont: {
+                    size: 12
+                },
+                padding: 12,
+                cornerRadius: 8
+            }
+        };
+
+        function wrapLabel(str, maxWidth) {
+            if (str.length <= maxWidth) {
+                return str;
+            }
+            const words = str.split(' ');
+            const lines = [];
+            let currentLine = '';
+            for (const word of words) {
+                if ((currentLine + word).length <= maxWidth) {
+                    currentLine += `${word} `;
+                } else {
+                    lines.push(currentLine.trim());
+                    currentLine = `${word} `;
+                }
+            }
+            lines.push(currentLine.trim());
+            return lines.filter(line => line.length > 0);
+        }
+
+        const solutionsLabels = [
+            'EMV 3D-Secure',
+            'Payment Passkeys (Biometria)',
+            'Tokenização',
+            'Click to Pay / SRC',
+            'Autenticação Silenciosa'
+        ].map(label => wrapLabel(label, 16));
+
+        new Chart(document.getElementById('solutionsChart'), {
+            type: 'bar',
+            data: {
+                labels: solutionsLabels,
+                datasets: [{
+                    label: 'Nível de Segurança',
+                    data: [8, 10, 9, 8.5, 7],
+                    backgroundColor: '#0A9396',
+                    borderColor: '#005F73',
+                    borderWidth: 2,
+                    borderRadius: 5
+                }, {
+                    label: 'Redução de Atrito (UX)',
+                    data: [6, 9.5, 10, 9, 10],
+                    backgroundColor: '#94D2BD',
+                    borderColor: '#0A9396',
+                    borderWidth: 2,
+                    borderRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        max: 10,
+                        title: {
+                            display: true,
+                            text: 'Nível (0 a 10)',
+                            font: { size: 14 }
+                        }
+                    },
+                    y: {
+                        ticks: {
+                            font: { size: 12 }
+                        }
+                    }
+                },
+                plugins: {
+                     tooltip: {
+                        callbacks: {
+                            title: tooltipTitleCallback
+                        },
+                        backgroundColor: '#005F73',
+                        titleFont: { size: 14, weight: 'bold' },
+                        bodyFont: { size: 12 },
+                        padding: 12,
+                        cornerRadius: 8
+                    },
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Comparativo de Soluções: Segurança vs. Experiência do Usuário',
+                        font: { size: 18, weight: 'bold' },
+                        padding: { top: 10, bottom: 20 }
+                    }
+                }
+            }
+        });
+
+        const createBenefitChart = (id, value, color) => {
+            new Chart(document.getElementById(id), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Benefício', ''],
+                    datasets: [{
+                        data: [value, 100 - value],
+                        backgroundColor: [color, '#e5e7eb'],
+                        borderColor: ['#ffffff'],
+                        borderWidth: 4,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: defaultPlugins
+                }
+            });
+        };
+
+        createBenefitChart('securityChart', 95, '#005F73');
+        createBenefitChart('uxChart', 90, '#0A9396');
+        createBenefitChart('scalabilityChart', 85, '#94D2BD');
+        createBenefitChart('flexibilityChart', 88, '#EE9B00');
+
+    </script>
+</body>
+</html>
