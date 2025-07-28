@@ -273,7 +273,7 @@
                             </tr>
                             <tr>
                                 <td class="p-4 font-semibold" data-translate-key="tableRowGuestScenario">Guest Checkout (CIT)</td>
-                                <td class="p-4 text-gray-600" data-translate-key="tableRowGuestTech">Payment Passkeys + Autenticação Passiva</td>
+                                <td class="p-4 text-gray-600" data-translate-key="tableRowGuestTech">Payment Passkeys + Autenticação Pasiva</td>
                             </tr>
                             <tr>
                                 <td class="p-4 font-semibold" data-translate-key="tableRowNonTokenizedScenario">Transações Não Tokenizadas</td>
@@ -308,9 +308,9 @@
 
                     <div class="diagram-horizontal-line my-8"></div>
 
-                    <!-- Guest Checkout Branching Flow -->
+                    <!-- New SRC Decision & Guest Checkout Integration -->
                     <div class="flex flex-col items-center mb-8">
-                        <div class="diagram-node text-xl py-3 px-6" data-translate-key="diagramGuestCheckout">Guest Checkout</div>
+                        <div class="diagram-node text-xl py-3 px-6" data-translate-key="diagramTransactionStart">Início da Transação</div>
                         <div class="diagram-connector"></div>
                         <div class="diagram-text-small text-center" data-translate-key="diagramSRCDecision">Decisão: Usar Secure Remote Commerce (SRC)?</div>
                         
@@ -320,8 +320,10 @@
                                 <div class="diagram-text-small font-bold text-red-700" data-translate-key="diagramSRCNONo">NÃO</div>
                                 <div class="diagram-connector diagram-connector-small"></div>
                                 <div class="diagram-node text-base" data-translate-key="diagramCardholderNoSRC">Portador do cartão Não Realiza o check-out com SRC</div>
+                                <div class="diagram-connector diagram-connector-small"></div>
+                                <div class="diagram-icon return-arrow">↩️</div> <!-- Visual return cue -->
                                 <div class="diagram-text-small mt-2 text-center text-gray-600" data-translate-key="diagramReturnToAuthFlows">Retorna aos fluxos de Autenticação (Tokens / 3DSecure)</div>
-                                <div class="diagram-icon return-arrow">↩️</div>
+                                <div class="diagram-text-small mt-2 text-center text-gray-500 italic" data-translate-key="diagramGuestCheckoutContext">(Ex: Guest Checkout)</div>
                             </div>
 
                             <!-- "SIM Realiza" branch -->
@@ -412,12 +414,13 @@
                 diagramCommerce3DSecure: 'Comércio suporta Autenticação via 3DSecure',
                 diagram3DSecureFull: '3DSecure',
                 diagram3DSecureSub: '(Data Share Only / 3DS Full)',
-                diagramGuestCheckout: 'Guest Checkout',
+                diagramTransactionStart: 'Início da Transação',
                 diagramSRCDecision: 'Decisão: Usar Secure Remote Commerce (SRC)?',
                 diagramSRCNONo: 'NÃO',
                 diagramSRCSIM: 'SIM',
                 diagramCardholderNoSRC: 'Portador do cartão Não Realiza o check-out com SRC',
                 diagramReturnToAuthFlows: 'Retorna aos fluxos de Autenticação (Tokens / 3DSecure)',
+                diagramGuestCheckoutContext: '(Ex: Guest Checkout)',
                 diagramCardholderSRC: 'Portador do cartão Realiza o Check-out via SRC',
                 diagramNetworkToken: 'Network token',
                 diagramPaymentPasskeys: 'Payment Passkeys',
@@ -484,12 +487,13 @@
                 diagramCommerce3DSecure: 'Merchant supports Authentication via 3DSecure',
                 diagram3DSecureFull: '3DSecure',
                 diagram3DSecureSub: '(Data Share Only / 3DS Full)',
-                diagramGuestCheckout: 'Guest Checkout',
+                diagramTransactionStart: 'Transaction Start',
                 diagramSRCDecision: 'Decision: Use Secure Remote Commerce (SRC)?',
                 diagramSRCNONo: 'NO',
                 diagramSRCSIM: 'YES',
                 diagramCardholderNoSRC: 'Cardholder Does Not Checkout with SRC',
                 diagramReturnToAuthFlows: 'Returns to Authentication flows (Tokens / 3DSecure)',
+                diagramGuestCheckoutContext: '(Ex: Guest Checkout)',
                 diagramCardholderSRC: 'Cardholder Checks Out via SRC',
                 diagramNetworkToken: 'Network token',
                 diagramPaymentPasskeys: 'Payment Passkeys',
@@ -556,8 +560,13 @@
                 diagramCommerce3DSecure: 'Comercio soporta Autenticación vía 3DSecure',
                 diagram3DSecureFull: '3DSecure',
                 diagram3DSecureSub: '(Solo Compartir Datos / 3DS Completo)',
-                diagramGuestCheckout: 'Pago como Invitado',
+                diagramTransactionStart: 'Inicio de la Transacción',
+                diagramSRCDecision: 'Decisión: Usar Secure Remote Commerce (SRC)?',
+                diagramSRCNONo: 'NO',
+                diagramSRCSIM: 'SÍ',
                 diagramCardholderNoSRC: 'Titular de la tarjeta No Realiza el checkout con SRC',
+                diagramReturnToAuthFlows: 'Retorna a los flujos de Autenticación (Tokens / 3DSecure)',
+                diagramGuestCheckoutContext: '(Ej: Pago como Invitado)',
                 diagramCardholderSRC: 'Titular de la tarjeta Realiza el Checkout vía SRC',
                 diagramNetworkToken: 'Token de Red',
                 diagramPaymentPasskeys: 'Payment Passkeys',
