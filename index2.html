@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-translate-key="pageTitle">Infográfico: O Framework de Autenticação ABECS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (max-width: 768px) {
+            .chart-container {
+                height: 300px;
+            }
+        }
+        .kpi-value {
+            font-weight: 900;
+            color: #0A9396;
+            line-height: 1;
+        }
+        .flow-arrow {
+            font-size: 2rem;
+            color: #94D2BD;
+            line-height: 1;
+        }
+        .flow-box {
+            border: 2px solid #0A9396;
+            background-color: #f0fdfa;
+        }
+        .benefit-card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            padding: 1.5rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .benefit-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+        .gradient-text {
+            background: linear-gradient(45deg, #0A9396, #005F73);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        /* Styles for the new combination diagram */
+        .combination-diagram {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.5rem;
+            background-color: #f0fdfa;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        .diagram-node {
+            background-color: #fff;
+            border: 2px solid #0A9396;
+            border-radius: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            text-align: center;
+            font-weight: 600;
+            color: #005F73;
+            box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        }
+        .diagram-connector {
+            width: 2px;
+            height: 2rem;
+            background-color: #94D2BD;
+            position: relative;
+        }
+        .diagram-connector::after {
+            content: '▼';
+            position: absolute;
+            bottom: -0.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #94D2BD;
+            font-size: 1rem;
+        }
+        .diagram-horizontal-line {
+            width: 100%;
+            height: 2px;
+            background-color: #94D2BD;
+            margin: 0.5rem 0;
+        }
+        .diagram-label {
+            font-size: 0.875rem;
+            color: #005F73;
+            margin-top: 0.5rem;
+        }
+        .diagram-row {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .diagram-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .diagram-icon {
+            font-size: 2.5rem;
+            color: #0A9396;
+            margin-bottom: 0.5rem;
+        }
+        .diagram-text-small {
+            font-size: 0.75rem;
+            color: #005F73;
+        }
+        .benefit-icon {
+            font-size: 3.5rem; /* Larger size for impact */
+            color: #0A9396; /* Consistent color from palette */
+            margin-bottom: 1rem;
+            line-height: 1; /* Ensure no extra space */
+        }
+        .language-button {
+            padding: 0.2rem 0.5rem; /* Further reduced padding */
+            font-size: 0.75rem; /* Even smaller font size */
+            border: 1px solid #0A9396;
+            border-radius: 0.375rem;
+            background-color: #ffffff;
+            color: #0A9396;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+        }
+        .language-button.active, .language-button:hover {
+            background-color: #0A9396;
+            color: #ffffff;
+            border-color: #005F73;
+        }
+        .diagram-connector-small {
+            height: 1rem; /* Smaller connector for internal branches */
+        }
+        .diagram-icon.return-arrow {
+            font-size: 2rem; /* Make return arrow slightly smaller */
+            color: #EF4444; /* Red color for "return" path */
+            transform: rotate(180deg); /* Rotate to indicate return */
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8">
+
+        <header class="text-center mb-12">
+            <div class="flex justify-end mb-4 space-x-1">
+                <button id="lang-pt" class="language-button" data-lang="pt">PT</button>
+                <button id="lang-en" class="language-button" data-lang="en">EN</button>
+                <button id="lang-es" class="language-button" data-lang="es">ES</button>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-extrabold mb-2 gradient-text" data-translate-key="headerTitle">A Evolução da Segurança em Pagamentos</h1>
+            <p class="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto" data-translate-key="headerSubtitle">Uma análise visual do Framework de Autenticação do Normativo ABECS Nº 31, que vai além do 3DS para um ecossistema de segurança mais robusto e integrado.</p>
+        </header>
+
+        <main class="space-y-16">
+
+            <section id="kpis">
+                <h2 class="text-3xl font-bold text-center mb-8 text-gray-800" data-translate-key="kpisTitle">Impacto Direto da Tokenização</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                    <div class="benefit-card text-center">
+                        <p class="text-lg text-gray-600 mb-2" data-translate-key="kpiApprovalRate">Aumento na Taxa de Aprovação</p>
+                        <p class="text-7xl kpi-value">+4.7%</p>
+                        <p class="mt-4 text-gray-500" data-translate-key="kpiApprovalDescription">A substituição de dados sensíveis por tokens eleva a confiança dos emissores, resultando em mais transações aprovadas.</p>
+                    </div>
+                    <div class="benefit-card text-center">
+                        <p class="text-lg text-gray-600 mb-2" data-translate-key="kpiFraudReduction">Redução de Fraudes</p>
+                        <p class="text-7xl kpi-value">-31%</p>
+                        <p class="mt-4 text-gray-500" data-translate-key="kpiFraudDescription">Tokens tornam os dados do cartão inúteis para fraudadores, diminuindo drasticamente os chargebacks e perdas.</p>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="flow">
+                <h2 class="text-3xl font-bold text-center mb-8 text-gray-800" data-translate-key="flowTitle">Componentes Chave do Framework</h2>
+                <p class="text-center text-gray-600 max-w-2xl mx-auto mb-10" data-translate-key="flowSubtitle">O framework opera como um fluxo contínuo e interconectado para garantir a segurança em cada etapa da transação.</p>
+                <div class="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-0 text-center">
+                    <div class="p-6 rounded-lg flow-box w-60">
+                        <div class="text-4xl mb-2">💳</div>
+                        <h3 class="font-bold text-lg text-teal-800" data-translate-key="flowTokenGenerationTitle">Geração de Tokens</h3>
+                        <p class="text-sm text-teal-700" data-translate-key="flowTokenGenerationDescription">O PAN é substituído por um token único.</p>
+                    </div>
+                    <div class="flow-arrow transform md:-rotate-0 rotate-90">➔</div>
+                    <div class="p-6 rounded-lg flow-box w-60">
+                        <div class="text-4xl mb-2">🔍</div>
+                        <h3 class="font-bold text-lg text-teal-800" data-translate-key="flowIDVTitle">ID & Verificação</h3>
+                        <p class="text-sm text-teal-700" data-translate-key="flowIDVDescription">O token é validado e vinculado a um dispositivo.</p>
+                    </div>
+                    <div class="flow-arrow transform md:-rotate-0 rotate-90">➔</div>
+                    <div class="p-6 rounded-lg flow-box w-60">
+                        <div class="text-4xl mb-2">🛡️</div>
+                        <h3 class="font-bold text-lg text-teal-800" data-translate-key="flowAuthTitle">Autenticação</h3>
+                        <p class="text-sm text-teal-700" data-translate-key="flowAuthDescription">Via 3DS ou Payment Passkeys (Biometria).</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="solutions">
+                <h2 class="text-3xl font-bold text-center mb-8 text-gray-800" data-translate-key="solutionsTitle">Um Ecossistema de Soluções de Autenticação</h2>
+                <p class="text-center text-gray-600 max-w-2xl mx-auto mb-10" data-translate-key="solutionsSubtitle">O framework não se baseia em uma única tecnologia, mas em um conjunto de soluções que se adaptam a diferentes cenários, equilibrando segurança e experiência do usuário.</p>
+                <div class="benefit-card">
+                    <div class="chart-container h-[450px] max-h-[500px]">
+                        <canvas id="solutionsChart"></canvas>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="benefits">
+                <h2 class="text-3xl font-bold text-center mb-8 text-gray-800" data-translate-key="benefitsTitle">Benefícios Chave do Framework</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div class="benefit-card text-center">
+                        <div class="benefit-icon">🛡️</div>
+                        <h3 class="text-xl font-bold mb-2 text-teal-700" data-translate-key="benefitSecurityTitle">Segurança Robusta</h3>
+                        <p class="text-gray-600" data-translate-key="benefitSecurityDescription">Redução de fraudes com tokens, biometria (FIDO2) e o padrão 3DS.</p>
+                    </div>
+                    <div class="benefit-card text-center">
+                        <div class="benefit-icon">✨</div>
+                        <h3 class="text-xl font-bold mb-2 text-teal-700" data-translate-key="benefitEaseOfUseTitle">Facilidade de Uso</h3>
+                        <p class="text-gray-600" data-translate-key="benefitEaseOfUseDescription">Melhora a experiência do usuário e reduz o abandono de carrinho.</p>
+                    </div>
+                    <div class="benefit-card text-center">
+                        <div class="benefit-icon">🚀</div>
+                        <h3 class="text-xl font-bold mb-2 text-teal-700" data-translate-key="benefitScalabilityTitle">Escalabilidade</h3>
+                        <p class="text-gray-600" data-translate-key="benefitScalabilityDescription">Suporta alto volume de transações, mesmo em picos de vendas.</p>
+                    </div>
+                    <div class="benefit-card text-center">
+                        <div class="benefit-icon">🔄</div>
+                        <h3 class="text-xl font-bold mb-2 text-teal-700" data-translate-key="benefitFlexibilityTitle">Flexibilidade</h3>
+                        <p class="text-gray-600" data-translate-key="benefitFlexibilityDescription">Integra-se a diversos sistemas, plataformas e carteiras digitais.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="use-cases">
+                <h2 class="text-3xl font-bold text-center mb-8 text-gray-800" data-translate-key="useCasesTitle">Casos de Uso Aplicados</h2>
+                <p class="text-center text-gray-600 max-w-2xl mx-auto mb-10" data-translate-key="useCasesSubtitle">Cada tipo de transação pode ser otimizado com a tecnologia de autenticação mais adequada, garantindo a melhor performance.</p>
+                <div class="benefit-card overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="border-b-2 border-gray-200">
+                            <tr>
+                                <th class="p-4 text-lg font-semibold text-teal-800" data-translate-key="tableHeaderScenario">Cenário de Pagamento</th>
+                                <th class="p-4 text-lg font-semibold text-teal-800" data-translate-key="tableHeaderTechnology">Tecnologia Utilizada</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="p-4 font-semibold" data-translate-key="tableRowMITScenario">Assinaturas e Recorrências (MIT)</td>
+                                <td class="p-4 text-gray-600" data-translate-key="tableRowMITTech">Verificação de Token (ID&V)</td>
+                            </tr>
+                            <tr>
+                                <td class="p-4 font-semibold" data-translate-key="tableRowCIT1stScenario">Card on File + 1ª Compra (CIT)</td>
+                                <td class="p-4 text-gray-600" data-translate-key="tableRowCIT1stTech">Payment Passkeys</td>
+                            </tr>
+                            <tr>
+                                <td class="p-4 font-semibold" data-translate-key="tableRowGuestScenario">Guest Checkout (CIT)</td>
+                                <td class="p-4 text-gray-600" data-translate-key="tableRowGuestTech">Payment Passkeys + Autenticação Passiva</td>
+                            </tr>
+                            <tr>
+                                <td class="p-4 font-semibold" data-translate-key="tableRowNonTokenizedScenario">Transações Não Tokenizadas</td>
+                                <td class="p-4 text-gray-600" data-translate-key="tableRowNonTokenizedTech">EMV 3D-Secure</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="combination-map">
+                <h2 class="text-3xl font-bold text-center mb-8 text-gray-800" data-translate-key="combinationMapTitle">Como as Soluções se Combinam</h2>
+                <p class="text-center text-gray-600 max-w-2xl mx-auto mb-10" data-translate-key="combinationMapSubtitle">O Framework de Autenticação permite a combinação estratégica de diferentes tecnologias para otimizar a segurança e a experiência do usuário em diversos fluxos de pagamento.</p>
+                <div class="combination-diagram max-w-5xl mx-auto">
+                    <!-- Card On File Flows -->
+                    <div class="diagram-row mb-8">
+                        <div class="diagram-column">
+                            <div class="diagram-node" data-translate-key="diagramCardOnFile">Card On File</div>
+                            <div class="diagram-connector"></div>
+                            <div class="diagram-text-small" data-translate-key="diagramCommerceTokenization">Comércio suporta TOKENIZAÇÃO e a autenticação não é via 3DS</div>
+                            <div class="diagram-icon">⬡</div>
+                            <div class="diagram-node" data-translate-key="diagramTokens">Tokens</div>
+                        </div>
+                        <div class="diagram-column">
+                            <div class="diagram-node" data-translate-key="diagramCardOnFile2">Card On File</div>
+                            <div class="diagram-connector"></div>
+                            <div class="diagram-text-small" data-translate-key="diagramCommerce3DSecure">Comércio suporta Autenticação via 3DSecure</div>
+                            <div class="diagram-icon">🔒</div>
+                            <div class="diagram-node" data-translate-key="diagram3DSecureFull">3DSecure<br><span class="diagram-text-small" data-translate-key="diagram3DSecureSub">(Data Share Only / 3DS Full)</span></div>
+                        </div>
+                    </div>
+
+                    <div class="diagram-horizontal-line my-8"></div>
+
+                    <!-- Guest Checkout Branching Flow -->
+                    <div class="flex flex-col items-center mb-8">
+                        <div class="diagram-node text-xl py-3 px-6" data-translate-key="diagramGuestCheckout">Guest Checkout</div>
+                        <div class="diagram-connector"></div>
+                        <div class="diagram-text-small text-center" data-translate-key="diagramSRCDecision">Decisão: Usar Secure Remote Commerce (SRC)?</div>
+                        
+                        <div class="flex flex-col md:flex-row justify-center items-start w-full mt-4 gap-8">
+                            <!-- "NÃO Realiza" branch -->
+                            <div class="diagram-column flex-1 items-center p-4 border border-gray-200 rounded-lg bg-white shadow-sm">
+                                <div class="diagram-text-small font-bold text-red-700" data-translate-key="diagramSRCNONo">NÃO</div>
+                                <div class="diagram-connector diagram-connector-small"></div>
+                                <div class="diagram-node text-base" data-translate-key="diagramCardholderNoSRC">Portador do cartão Não Realiza o check-out com SRC</div>
+                                <div class="diagram-text-small mt-2 text-center text-gray-600" data-translate-key="diagramReturnToAuthFlows">Retorna aos fluxos de Autenticação (Tokens / 3DSecure)</div>
+                                <div class="diagram-icon return-arrow">↩️</div>
+                            </div>
+
+                            <!-- "SIM Realiza" branch -->
+                            <div class="diagram-column flex-1 items-center p-4 border border-gray-200 rounded-lg bg-white shadow-sm">
+                                <div class="diagram-text-small font-bold text-green-700" data-translate-key="diagramSRCSIM">SIM</div>
+                                <div class="diagram-connector diagram-connector-small"></div>
+                                <div class="diagram-node text-base" data-translate-key="diagramCardholderSRC">Portador do cartão Realiza o Check-out via SRC</div>
+                                <div class="diagram-connector"></div>
+                                <div class="diagram-icon">≫</div>
+                                <div class="diagram-node" data-translate-key="diagramNetworkToken">Network token</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="diagram-horizontal-line my-8"></div>
+                    <div class="diagram-node text-2xl py-4 px-8" data-translate-key="diagramPaymentPasskeys">Payment Passkeys</div>
+                    <div class="diagram-text-small mt-2 text-center max-w-xl" data-translate-key="diagramPaymentPasskeysDescription">As Payment Passkeys servem como uma camada fundamental de autenticação, podendo ser aplicadas em diversos pontos do fluxo para reforçar a segurança e simplificar a experiência do usuário.</div>
+                </div>
+            </section>
+            
+        </main>
+
+        <footer class="text-center mt-16 pt-8 border-t border-gray-200">
+            <p class="text-gray-500" data-translate-key="footerDataSource">Todos os dados são baseados no normativo Nº 31.<br><span class="text-xs">Copyright © 2025 AuthPros.</span></p>
+        </footer>
+
+    </div>
+
+    <script>
+        const translations = {
+            pt: {
+                pageTitle: 'Infográfico: O Framework de Autenticação ABECS',
+                headerTitle: 'A Evolução da Segurança em Pagamentos',
+                headerSubtitle: 'Uma análise visual do Framework de Autenticação do Normativo ABECS Nº 31, que vai além do 3DS para um ecossistema de segurança mais robusto e integrado.',
+                kpisTitle: 'Impacto Direto da Tokenização',
+                kpiApprovalRate: 'Aumento na Taxa de Aprovação',
+                kpiApprovalDescription: 'A substituição de dados sensíveis por tokens eleva a confiança dos emissores, resultando em mais transações aprovadas.',
+                kpiFraudReduction: 'Redução de Fraudes',
+                kpiFraudDescription: 'Tokens tornam os dados do cartão inúteis para fraudadores, diminuindo drasticamente os chargebacks e perdas.',
+                flowTitle: 'Componentes Chave do Framework',
+                flowSubtitle: 'O framework opera como um fluxo contínuo e interconectado para garantir a segurança em cada etapa da transação.',
+                flowTokenGenerationTitle: 'Geração de Tokens',
+                flowTokenGenerationDescription: 'O PAN é substituído por um token único.',
+                flowIDVTitle: 'ID & Verificação',
+                flowIDVDescription: 'O token é validado e vinculado a um dispositivo.',
+                flowAuthTitle: 'Autenticação',
+                flowAuthDescription: 'Via 3DS ou Payment Passkeys (Biometria).',
+                solutionsTitle: 'Um Ecossistema de Soluções de Autenticação',
+                solutionsSubtitle: 'O framework não se baseia em uma única tecnologia, mas em um conjunto de soluções que se adaptam a diferentes cenários, equilibrando segurança e experiência do usuário.',
+                solutionsChartTitle: 'Comparativo de Soluções: Segurança vs. Experiência do Usuário',
+                solutionsChartXAxis: 'Nível (0 a 10)',
+                solutionsChartSecurityLabel: 'Nível de Segurança',
+                solutionsChartFrictionLabel: 'Redução de Atrito (UX)',
+                solutionsChartLabels: [
+                    'EMV 3D-Secure',
+                    'Payment Passkeys (Biometria)',
+                    'Tokenização',
+                    'Secure Remote Commerce (SRC)',
+                    'Autenticação Silenciosa'
+                ],
+                benefitsTitle: 'Benefícios Chave do Framework',
+                benefitSecurityTitle: 'Segurança Robusta',
+                benefitSecurityDescription: 'Redução de fraudes com tokens, biometria (FIDO2) e o padrão 3DS.',
+                benefitEaseOfUseTitle: 'Facilidade de Uso',
+                benefitEaseOfUseDescription: 'Melhora a experiência do usuário e reduz o abandono de carrinho.',
+                benefitScalabilityTitle: 'Escalabilidade',
+                benefitScalabilityDescription: 'Suporta alto volume de transações, mesmo em picos de vendas.',
+                benefitFlexibilityTitle: 'Flexibilidade',
+                benefitFlexibilityDescription: 'Integra-se a diversos sistemas, plataformas e carteiras digitais.',
+                useCasesTitle: 'Casos de Uso Aplicados',
+                useCasesSubtitle: 'Cada tipo de transação pode ser otimizado com a tecnologia de autenticação mais adequada, garantindo a melhor performance.',
+                tableHeaderScenario: 'Cenário de Pagamento',
+                tableHeaderTechnology: 'Tecnologia Utilizada',
+                tableRowMITScenario: 'Assinaturas e Recorrências (MIT)',
+                tableRowMITTech: 'Verificação de Token (ID&V)',
+                tableRowCIT1stScenario: 'Card on File + 1ª Compra (CIT)',
+                tableRowCIT1stTech: 'Payment Passkeys',
+                tableRowGuestScenario: 'Guest Checkout (CIT)',
+                tableRowGuestTech: 'Payment Passkeys + Autenticação Pasiva',
+                tableRowNonTokenizedScenario: 'Transações Não Tokenizadas',
+                tableRowNonTokenizedTech: 'EMV 3D-Secure',
+                combinationMapTitle: 'Como as Soluções se Combinam',
+                combinationMapSubtitle: 'O Framework de Autenticação permite a combinação estratégica de diferentes tecnologias para otimizar a segurança e a experiência do usuário em diversos fluxos de pagamento.',
+                diagramCardOnFile: 'Card On File',
+                diagramCommerceTokenization: 'Comércio suporta TOKENIZAÇÃO e a autenticação não é via 3DS',
+                diagramTokens: 'Tokens',
+                diagramCardOnFile2: 'Card On File',
+                diagramCommerce3DSecure: 'Comércio suporta Autenticação via 3DSecure',
+                diagram3DSecureFull: '3DSecure',
+                diagram3DSecureSub: '(Data Share Only / 3DS Full)',
+                diagramGuestCheckout: 'Guest Checkout',
+                diagramSRCDecision: 'Decisão: Usar Secure Remote Commerce (SRC)?',
+                diagramSRCNONo: 'NÃO',
+                diagramSRCSIM: 'SIM',
+                diagramCardholderNoSRC: 'Portador do cartão Não Realiza o check-out com SRC',
+                diagramReturnToAuthFlows: 'Retorna aos fluxos de Autenticação (Tokens / 3DSecure)',
+                diagramCardholderSRC: 'Portador do cartão Realiza o Check-out via SRC',
+                diagramNetworkToken: 'Network token',
+                diagramPaymentPasskeys: 'Payment Passkeys',
+                diagramPaymentPasskeysDescription: 'As Payment Passkeys servem como uma camada fundamental de autenticação, podendo ser aplicadas em diversos pontos do fluxo para reforçar a segurança e simplificar a experiência do usuário.',
+                footerDataSource: 'Todos os dados são baseados no normativo Nº 31.',
+            },
+            en: {
+                pageTitle: 'Infographic: The ABECS Authentication Framework',
+                headerTitle: 'The Evolution of Payment Security',
+                headerSubtitle: 'A visual analysis of ABECS Normative Nº 31\'s Authentication Framework, which goes beyond 3DS for a more robust and integrated security ecosystem.',
+                kpisTitle: 'Direct Impact of Tokenization',
+                kpiApprovalRate: 'Approval Rate Increase',
+                kpiApprovalDescription: 'Replacing sensitive data with tokens boosts issuer confidence, resulting in more approved transactions.',
+                kpiFraudReduction: 'Fraud Reduction',
+                kpiFraudDescription: 'Tokens render card data useless to fraudsters, drastically reducing chargebacks and losses.',
+                flowTitle: 'Key Components of the Framework',
+                flowSubtitle: 'The framework operates as a continuous, interconnected flow to ensure security at every transaction stage.',
+                flowTokenGenerationTitle: 'Token Generation',
+                flowTokenGenerationDescription: 'The PAN is replaced by a unique token.',
+                flowIDVTitle: 'ID & Verification',
+                flowIDVDescription: 'The token is validated and linked to a device.',
+                flowAuthTitle: 'Authentication',
+                flowAuthDescription: 'Via 3DS or Payment Passkeys (Biometrics).',
+                solutionsTitle: 'An Ecosystem of Authentication Solutions',
+                solutionsSubtitle: 'The framework is not based on a single technology, but on a set of solutions that adapt to different scenarios, balancing security and user experience.',
+                solutionsChartTitle: 'Solutions Comparison: Security vs. User Experience',
+                solutionsChartXAxis: 'Level (0 to 10)',
+                solutionsChartSecurityLabel: 'Security Level',
+                solutionsChartFrictionLabel: 'Friction Reduction (UX)',
+                solutionsChartLabels: [
+                    'EMV 3D-Secure',
+                    'Payment Passkeys (Biometrics)',
+                    'Tokenization',
+                    'Secure Remote Commerce (SRC)',
+                    'Frictionless Authentication'
+                ],
+                benefitsTitle: 'Key Benefits of the Framework',
+                benefitSecurityTitle: 'Robust Security',
+                benefitSecurityDescription: 'Fraud reduction with tokens, biometrics (FIDO2), and the 3DS standard.',
+                benefitEaseOfUseTitle: 'Ease of Use',
+                benefitEaseOfUseDescription: 'Improves user experience and reduces cart abandonment.',
+                benefitScalabilityTitle: 'Scalability',
+                benefitScalabilityDescription: 'Supports high volume of transactions, even during peak sales.',
+                benefitFlexibilityTitle: 'Flexibility',
+                benefitFlexibilityDescription: 'Integrates with various systems, platforms, and digital wallets.',
+                useCasesTitle: 'Applied Use Cases',
+                useCasesSubtitle: 'Each transaction type can be optimized with the most appropriate authentication technology, ensuring the best performance.',
+                tableHeaderScenario: 'Payment Scenario',
+                tableHeaderTechnology: 'Technology Used',
+                tableRowMITScenario: 'Subscriptions and Recurring Payments (MIT)',
+                tableRowMITTech: 'Token Verification (ID&V)',
+                tableRowCIT1stScenario: 'Card on File + 1st Transaction (CIT)',
+                tableRowCIT1stTech: 'Payment Passkeys',
+                tableRowGuestScenario: 'Guest Checkout (CIT)',
+                tableRowGuestTech: 'Payment Passkeys + Passive Authentication',
+                tableRowNonTokenizedScenario: 'Non-Tokenized Transactions',
+                tableRowNonTokenizedTech: 'EMV 3D-Secure',
+                combinationMapTitle: 'How Solutions Combine',
+                combinationMapSubtitle: 'The Authentication Framework allows the strategic combination of different technologies to optimize security and user experience across various payment flows.',
+                diagramCardOnFile: 'Card On File',
+                diagramCommerceTokenization: 'Merchant supports TOKENIZATION and authentication is not via 3DS',
+                diagramTokens: 'Tokens',
+                diagramCardOnFile2: 'Card On File',
+                diagramCommerce3DSecure: 'Merchant supports Authentication via 3DSecure',
+                diagram3DSecureFull: '3DSecure',
+                diagram3DSecureSub: '(Data Share Only / 3DS Full)',
+                diagramGuestCheckout: 'Guest Checkout',
+                diagramSRCDecision: 'Decision: Use Secure Remote Commerce (SRC)?',
+                diagramSRCNONo: 'NO',
+                diagramSRCSIM: 'YES',
+                diagramCardholderNoSRC: 'Cardholder Does Not Checkout with SRC',
+                diagramReturnToAuthFlows: 'Returns to Authentication flows (Tokens / 3DSecure)',
+                diagramCardholderSRC: 'Cardholder Checks Out via SRC',
+                diagramNetworkToken: 'Network token',
+                diagramPaymentPasskeys: 'Payment Passkeys',
+                diagramPaymentPasskeysDescription: 'Payment Passkeys serve as a fundamental authentication layer, applicable at various points in the flow to enhance security and simplify the user experience.',
+                footerDataSource: 'All data is based on Normative Nº 31.',
+            },
+            es: {
+                pageTitle: 'Infografía: El Marco de Autenticación ABECS',
+                headerTitle: 'La Evolución de la Seguridad en Pagos',
+                headerSubtitle: 'Un análisis visual del Marco de Autenticación de la Normativa ABECS Nº 31, que va más allá de 3DS para un ecosistema de seguridad más robusto e integrado.',
+                kpisTitle: 'Impacto Directo de la Tokenización',
+                kpiApprovalRate: 'Aumento en la Tasa de Aprobación',
+                kpiApprovalDescription: 'La sustitución de datos sensibles por tokens aumenta la confianza de los emisores, resultando en más transacciones aprobadas.',
+                kpiFraudReduction: 'Reducción de Fraudes',
+                kpiFraudDescription: 'Los tokens hacen que los datos de la tarjeta sean inútiles para los defraudadores, reduciendo drásticamente los contracargos y las pérdidas.',
+                flowTitle: 'Componentes Clave del Marco',
+                flowSubtitle: 'El marco opera como un flujo continuo e interconectado para garantizar la seguridad en cada etapa de la transacción.',
+                flowTokenGenerationTitle: 'Generación de Tokens',
+                flowTokenGenerationDescription: 'El PAN es reemplazado por un token único.',
+                flowIDVTitle: 'ID y Verificación',
+                flowIDVDescription: 'El token es validado y vinculado a un dispositivo.',
+                flowAuthTitle: 'Autenticación',
+                flowAuthDescription: 'Vía 3DS o Payment Passkeys (Biometría).',
+                solutionsTitle: 'Un Ecosistema de Soluciones de Autenticación',
+                solutionsSubtitle: 'El marco no se basa en una única tecnología, sino en un conjunto de soluciones que se adaptan a diferentes escenarios, equilibrando seguridad y experiencia de usuario.',
+                solutionsChartTitle: 'Comparativa de Soluciones: Seguridad vs. Experiencia de Usuario',
+                solutionsChartXAxis: 'Nivel (0 a 10)',
+                solutionsChartSecurityLabel: 'Nivel de Seguridad',
+                solutionsChartFrictionLabel: 'Reducción de Fricción (UX)',
+                solutionsChartLabels: [
+                    'EMV 3D-Secure',
+                    'Payment Passkeys (Biometría)',
+                    'Tokenización',
+                    'Secure Remote Commerce (SRC)',
+                    'Autenticación sin Fricción'
+                ],
+                benefitsTitle: 'Beneficios Clave del Marco',
+                benefitSecurityTitle: 'Seguridad Robusta',
+                benefitSecurityDescription: 'Reducción de fraudes con tokens, biometría (FIDO2) y el estándar 3DS.',
+                benefitEaseOfUseTitle: 'Facilidad de Uso',
+                benefitEaseOfUseDescription: 'Mejora la experiencia del usuario y reduce el abandono del carrito.',
+                benefitScalabilityTitle: 'Escalabilidad',
+                benefitScalabilityDescription: 'Soporta un alto volumen de transacciones, incluso en picos de ventas.',
+                benefitFlexibilityTitle: 'Flexibilidad',
+                benefitFlexibilityDescription: 'Se integra con varios sistemas, plataformas y billeteras digitales.',
+                useCasesTitle: 'Casos de Uso Aplicados',
+                useCasesSubtitle: 'Cada tipo de transação pode otimizar-se com a tecnologia de autenticação mais adequada, garantindo o melhor rendimento.',
+                tableHeaderScenario: 'Escenario de Pago',
+                tableHeaderTechnology: 'Tecnología Utilizada',
+                tableRowMITScenario: 'Suscripciones y Pagos Recurrentes (MIT)',
+                tableRowMITTech: 'Verificación de Token (ID&V)',
+                tableRowCIT1stScenario: 'Tarjeta en Archivo + 1ª Transacción (CIT)',
+                tableRowCIT1stTech: 'Payment Passkeys',
+                tableRowGuestScenario: 'Pago como Invitado (CIT)',
+                tableRowGuestTech: 'Payment Passkeys + Autenticación Pasiva',
+                tableRowNonTokenizedScenario: 'Transacciones No Tokenizadas',
+                tableRowNonTokenizedTech: 'EMV 3D-Secure',
+                combinationMapTitle: 'Cómo se Combinan las Soluciones',
+                combinationMapSubtitle: 'El Marco de Autenticación permite la combinación estratégica de diferentes tecnologías para optimizar la seguridad y la experiencia del usuario en varios flujos de pago.',
+                diagramCardOnFile: 'Tarjeta en Archivo',
+                diagramCommerceTokenization: 'Comercio soporta TOKENIZACIÓN y la autenticación no es vía 3DS',
+                diagramTokens: 'Tokens',
+                diagramCardOnFile2: 'Tarjeta en Archivo',
+                diagramCommerce3DSecure: 'Comercio soporta Autenticación vía 3DSecure',
+                diagram3DSecureFull: '3DSecure',
+                diagram3DSecureSub: '(Solo Compartir Datos / 3DS Completo)',
+                diagramGuestCheckout: 'Pago como Invitado',
+                diagramCardholderNoSRC: 'Titular de la tarjeta No Realiza el checkout con SRC',
+                diagramCardholderSRC: 'Titular de la tarjeta Realiza el Checkout vía SRC',
+                diagramNetworkToken: 'Token de Red',
+                diagramPaymentPasskeys: 'Payment Passkeys',
+                diagramPaymentPasskeysDescription: 'Las Payment Passkeys sirven como una capa fundamental de autenticación, aplicables en varios puntos del flujo para mejorar la seguridad y simplificar la experiencia del usuario.',
+                footerDataSource: 'Todos los datos se basan en la Normativa Nº 31.',
+            }
+        };
+
+        let solutionsChartInstance = null; // To store the Chart.js instance
+
+        const tooltipTitleCallback = (tooltipItems) => {
+            const item = tooltipItems[0];
+            let label = item.chart.data.labels[item.dataIndex];
+            if (Array.isArray(label)) {
+                return label.join(' ');
+            }
+            return label;
+        };
+
+        const defaultPlugins = {
+            legend: {
+                display: false
+            },
+            tooltip: {
+                callbacks: {
+                    title: tooltipTitleCallback
+                },
+                backgroundColor: '#005F73',
+                titleFont: {
+                    size: 14,
+                    weight: 'bold'
+                },
+                bodyFont: {
+                    size: 12
+                },
+                padding: 12,
+                cornerRadius: 8
+            }
+        };
+
+        function wrapLabel(str, maxWidth) {
+            if (str.length <= maxWidth) {
+                return str;
+            }
+            const words = str.split(' ');
+            const lines = [];
+            let currentLine = '';
+            for (const word of words) {
+                if ((currentLine + word).length <= maxWidth) {
+                    currentLine += `${word} `;
+                } else {
+                    lines.push(currentLine.trim());
+                    currentLine = `${word} `;
+                }
+            }
+            lines.push(currentLine.trim());
+            return lines.filter(line => line.length > 0);
+        }
+
+        function updateContent(lang) {
+            document.querySelectorAll('[data-translate-key]').forEach(element => {
+                const key = element.getAttribute('data-translate-key');
+                if (translations[lang] && translations[lang][key]) {
+                    if (key === 'footerDataSource') {
+                        element.innerHTML = translations[lang][key] + '<br><span class="text-xs">Copyright © 2025 AuthPros.</span>';
+                    } else if (key === 'diagram3DSecureFull') {
+                        element.innerHTML = translations[lang][key] + '<br><span class="diagram-text-small">' + translations[lang]['diagram3DSecureSub'] + '</span>';
+                    } else {
+                        element.textContent = translations[lang][key];
+                    }
+                }
+            });
+
+            // Update Chart.js
+            if (solutionsChartInstance) {
+                solutionsChartInstance.destroy(); // Destroy previous instance to re-render
+            }
+
+            const currentSolutionsLabels = translations[lang].solutionsChartLabels.map(label => wrapLabel(label, 16));
+
+            solutionsChartInstance = new Chart(document.getElementById('solutionsChart'), {
+                type: 'bar',
+                data: {
+                    labels: currentSolutionsLabels,
+                    datasets: [{
+                        label: translations[lang].solutionsChartSecurityLabel,
+                        data: [8, 10, 9, 8.5, 7],
+                        backgroundColor: '#0A9396',
+                        borderColor: '#005F73',
+                        borderWidth: 2,
+                        borderRadius: 5
+                    }, {
+                        label: translations[lang].solutionsChartFrictionLabel,
+                        data: [6, 9.5, 10, 9, 10],
+                        backgroundColor: '#94D2BD',
+                        borderColor: '#0A9396',
+                        borderWidth: 2,
+                        borderRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            max: 10,
+                            title: {
+                                display: true,
+                                text: translations[lang].solutionsChartXAxis,
+                                font: { size: 14 }
+                            }
+                        },
+                        y: {
+                            ticks: {
+                                font: { size: 12 }
+                            }
+                        }
+                    },
+                    plugins: {
+                         tooltip: {
+                            callbacks: {
+                                title: tooltipTitleCallback
+                            },
+                            backgroundColor: '#005F73',
+                            titleFont: { size: 14, weight: 'bold' },
+                            bodyFont: { size: 12 },
+                            padding: 12,
+                            cornerRadius: 8
+                        },
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: translations[lang].solutionsChartTitle,
+                            font: { size: 18, weight: 'bold' },
+                            padding: { top: 10, bottom: 20 }
+                        }
+                    }
+                }
+            });
+
+            // Update active button styling
+            document.querySelectorAll('.language-button').forEach(button => {
+                if (button.dataset.lang === lang) {
+                    button.classList.add('active');
+                } else {
+                    button.classList.remove('active');
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const langButtons = document.querySelectorAll('.language-button');
+            
+            // Set default language to Portuguese and mark as active
+            updateContent('pt');
+
+            langButtons.forEach(button => {
+                button.addEventListener('click', (event) => {
+                    updateContent(event.target.dataset.lang);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
